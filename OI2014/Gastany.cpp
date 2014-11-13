@@ -10,15 +10,15 @@ int main(int argc, char **argv) {
 
 	int belongsTo[n+1];
 	int gastanEdges[n+1];
-	int usefulHeads[n+1];
-	int usefulTails[n+1];
-	vector<int> gastanyByUsefulNeighbors[n+1];
+	//int usefulHeads[n+1];
+	//int usefulTails[n+1];
+	int usefulEdges[n+1];
+	//vector<int> gastanyByUsefulNeighbors[n+1];
 
 	for(int i=0;i<n+1;i++){
 		belongsTo[i]=i;
 		gastanEdges[i]=0;
-		usefulHeads[i]=-1;
-		usefulTails[i]=-1;
+		usefulEdges[i]=0;
 	}
 
 	int beginx,endx;
@@ -29,32 +29,42 @@ int main(int argc, char **argv) {
 			gastanEdges[beginx]++;
 			gastanEdges[endx]++;
 			belongsTo[endx]=belongsTo[beginx];
-			if(gastanEdges[beginx]>gastanEdges[endx]){
-				usefulHeads[endx]=beginx;
-				usefulTails[beginx]=endx;
-			}
-			else{
-				usefulHeads[beginx]=endx;
-				usefulTails[endx]=beginx;
-			}
+			//if(gastanEdges[beginx]>gastanEdges[endx]){
+				usefulEdges[beginx]+=endx;
+				usefulEdges[endx]+=beginx;
+				//usefulHeads[endx]=beginx;
+				//usefulTails[beginx]=endx;
+			//}
+			//else{
+				//usefulHeads[beginx]=endx;
+				//usefulTails[endx]=beginx;
+			//}
 			u++;
 		}
 	}
 
-	for(int i=0;i<n+1;i++){
+	/*for(int i=0;i<n+1;i++){
 		gastanyByUsefulNeighbors[gastanEdges[i]].push_back(i);
-	}
+	}*/
 	int done=0;
 	int x = 1;
+	int zasek = 0;
 	while(done<n){
 		if(gastanEdges[x]==1){
 			gastanEdges[x]--;
-			gastanEdges[usefulHeads[x]]--;
+			gastanEdges[usefulEdges[x]]--;
+			usefulEdges[usefulEdges[x]]-=x;
 			done++;
 			cout << x << " ";
+			if(done == n-1){
+				cout << usefulEdges[x];
+				done++;
+			}
+			zasek=0;
 		}
 		x++;
-		if(x>n){x=1;}
+		if(x>n){x=1; zasek++;}
+		if(zasek==3) cout << "oh boy";
 	}
 
 }
