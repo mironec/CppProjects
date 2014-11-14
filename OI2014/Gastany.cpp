@@ -3,17 +3,24 @@
 #include <algorithm>
 using namespace std;
 
+int n,m;
+int* belongsTo;
+int* gastanEdges;
+int* usefulEdges;
+
+void turnBelong(int begin, int oldBelong, int newBelong){
+	for(int i=1;i<n+1;i++){
+		if(belongsTo[i]==oldBelong) belongsTo[i]=newBelong;
+	}
+}
+
 int main(int argc, char **argv) {
-	int n,m;
 
 	cin >> n >> m;
 
-	int belongsTo[n+1];
-	int gastanEdges[n+1];
-	//int usefulHeads[n+1];
-	//int usefulTails[n+1];
-	int usefulEdges[n+1];
-	//vector<int> gastanyByUsefulNeighbors[n+1];
+	belongsTo = new int[n+1];
+	gastanEdges = new int[n+1];
+	usefulEdges = new int[n+1];
 
 	for(int i=0;i<n+1;i++){
 		belongsTo[i]=i;
@@ -28,24 +35,25 @@ int main(int argc, char **argv) {
 		if(belongsTo[beginx]!=belongsTo[endx]){
 			gastanEdges[beginx]++;
 			gastanEdges[endx]++;
-			belongsTo[endx]=belongsTo[beginx];
-			//if(gastanEdges[beginx]>gastanEdges[endx]){
-				usefulEdges[beginx]+=endx;
-				usefulEdges[endx]+=beginx;
-				//usefulHeads[endx]=beginx;
-				//usefulTails[beginx]=endx;
-			//}
-			//else{
-				//usefulHeads[beginx]=endx;
-				//usefulTails[endx]=beginx;
-			//}
+
+			usefulEdges[beginx]+=endx;
+			usefulEdges[endx]+=beginx;
+			if(gastanEdges[beginx]>gastanEdges[endx]){
+				int oldB = belongsTo[endx];
+				belongsTo[endx]=belongsTo[beginx];
+				if(gastanEdges[endx]>1)
+					turnBelong(endx,oldB,belongsTo[endx]);
+			}
+			else{
+				int oldB = belongsTo[beginx];
+				belongsTo[beginx]=belongsTo[endx];
+				if(gastanEdges[beginx]>1)
+					turnBelong(beginx,oldB,belongsTo[beginx]);
+			}
 			u++;
 		}
 	}
 
-	/*for(int i=0;i<n+1;i++){
-		gastanyByUsefulNeighbors[gastanEdges[i]].push_back(i);
-	}*/
 	int done=0;
 	int x = 1;
 	int zasek = 0;
@@ -64,7 +72,10 @@ int main(int argc, char **argv) {
 		}
 		x++;
 		if(x>n){x=1; zasek++;}
-		if(zasek==3) cout << "oh boy";
+		if(zasek==3){
+			cout << "oh boy";
+			done = n;
+		}
 	}
 
 }
