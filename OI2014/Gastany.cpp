@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 #include <algorithm>
 using namespace std;
 
@@ -22,6 +23,9 @@ int main(int argc, char **argv) {
 	gastanEdges = new int[n+1];
 	usefulEdges = new int[n+1];
 
+	vector<vector<int> > E;
+	E.resize(n+1);
+
 	for(int i=0;i<n+1;i++){
 		belongsTo[i]=i;
 		gastanEdges[i]=0;
@@ -29,10 +33,12 @@ int main(int argc, char **argv) {
 	}
 
 	int beginx,endx;
-	int u=0;
+	//int u=0;
 	for(int i=0;i<m;i++){
 		cin >> beginx >> endx;
-		if(belongsTo[beginx]!=belongsTo[endx]){
+		E[beginx].push_back(endx);
+		E[endx].push_back(beginx);
+		/*if(belongsTo[beginx]!=belongsTo[endx]){
 			gastanEdges[beginx]++;
 			gastanEdges[endx]++;
 
@@ -51,6 +57,25 @@ int main(int argc, char **argv) {
 					turnBelong(beginx,oldB,belongsTo[beginx]);
 			}
 			u++;
+		}*/
+	}
+
+	stack<int> testFor;
+	testFor.push(1);
+	while(!testFor.empty()){
+		int test = testFor.top();
+		testFor.pop();
+		for(unsigned int z=0;z<E[test].size();z++){
+			if(belongsTo[E[test][z]]!=1){
+				gastanEdges[test]++;
+				gastanEdges[E[test][z]]++;
+
+				usefulEdges[test]+=E[test][z];
+				usefulEdges[E[test][z]]+=test;
+
+				belongsTo[E[test][z]]=1;
+				testFor.push(E[test][z]);
+			}
 		}
 	}
 
